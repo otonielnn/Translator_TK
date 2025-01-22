@@ -3,7 +3,7 @@ from googletrans import Translator
 
 translator = Translator()
 
-def translate():
+def translate(event=None):
     text = input_text.get('1.0', 'end')
     input_language = combo_input.get()
     output_language = combo_output.get()
@@ -73,5 +73,7 @@ button = Button(
     command=translate
 )
 button.pack(fill='both', padx=10, pady=10)
+
+window.bind('<Return>', translate)
 
 window.mainloop()
