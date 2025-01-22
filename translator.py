@@ -40,7 +40,25 @@ input_text.pack(padx=10, fill='both', expand='yes')
 
 
 #Output
-combo_output = ttk.Combobox(values=language_list)
-combo_output.pack()
+frame_output = ttk.Frame()
+
+label_output = ttk.Label(
+    frame_output,
+    text='Output:',
+    font=(None, 20),
+)
+
+combo_output = ttk.Combobox(
+    frame_output,
+    values=language_list,
+    font=(None, 20)
+)
+combo_output.set('en')
+label_output.grid(row=0, column=0, padx=10, pady=10)
+combo_output.grid(row=0, column=1)
+frame_output.pack()
+
+output_text = Text()
+output_text.pack(padx=10, pady=20, fill='both', expand='yes')
 
 window.mainloop()
