@@ -1,7 +1,14 @@
 from tkinter import Tk, ttk, Text, Button
 from googletrans import Translator
+from ttkbootstrap import Style
 
 translator = Translator()
+
+style = Style(theme='superhero')
+window = style.master
+window.title('Translator')
+
+global_frame = ttk.Frame()
 
 def translate(event=None):
     text = input_text.get('1.0', 'end')
@@ -12,15 +19,11 @@ def translate(event=None):
     output_text.delete('1.0', 'end')
     output_text.insert('1.0',result.text)
     output_text.configure(state='disabled')
-    # return result
-
-window = Tk()
-window.title('Translator')
 
 language_list = ['pt', 'es', 'en']
 
 # Input
-frame_input = ttk.Frame()
+frame_input = ttk.Frame(global_frame)
 
 label_input = ttk.Label(
     frame_input,
@@ -40,12 +43,16 @@ label_input.grid(row=0, column=0, padx=10, pady=10)
 combo_input.grid(row=0, column=1)
 frame_input.pack()
 
-input_text = Text()
+input_text = Text(
+    global_frame,
+    height=10,
+    width=50,
+)
 input_text.pack(padx=10, fill='both', expand='yes')
 
 
 #Output
-frame_output = ttk.Frame()
+frame_output = ttk.Frame(global_frame)
 
 label_output = ttk.Label(
     frame_output,
@@ -64,16 +71,24 @@ label_output.grid(row=0, column=0, padx=10, pady=10)
 combo_output.grid(row=0, column=1)
 frame_output.pack()
 
-output_text = Text(state='disabled')
+output_text = Text(
+    global_frame,
+    state='disabled',
+    height=10,
+    width=50
+)
 output_text.pack(padx=10, pady=20, fill='both', expand='yes')
 
-button = Button(
+button = ttk.Button(
+    global_frame,
     text='Translate!',
-    font=(None, 20),
+    # font=(None, 20),
     command=translate
 )
 button.pack(fill='both', padx=10, pady=10)
 
 window.bind('<Return>', translate)
+
+global_frame.pack()
 
 window.mainloop()
