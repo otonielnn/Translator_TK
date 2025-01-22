@@ -61,4 +61,7 @@ frame_output.pack()
 output_text = Text()
 output_text.pack(padx=10, pady=20, fill='both', expand='yes')
 
+button = ttk.Button(text='Translate!')
+button.pack()
+
 window.mainloop()
