@@ -4,6 +4,7 @@ A simple translator made with Tkinter.
 ## technologies Used
 - ``tkinter``
 - ``ttkbootstrap``
+- ``googletrans``
 
 ## How to run the project
 First you will need to install the libs ``googletrans``, ``tkinter`` and ``ttkbootstrap`` running the codes bellow on terminal:
