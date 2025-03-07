@@ -1,4 +1,4 @@
-from tkinter import Tk, ttk, Text, Button
+from tkinter import ttk, Text
 from googletrans import Translator
 from ttkbootstrap import Style
 
@@ -8,7 +8,8 @@ style = Style(theme='superhero')
 window = style.master
 window.title('Translator')
 
-global_frame = ttk.Frame()
+global_frame = ttk.Frame(window)
+global_frame.pack(fill='both', expand='yes')
 
 def translate(event=None):
     text = input_text.get('1.0', 'end')
@@ -17,10 +18,49 @@ def translate(event=None):
     result = translator.translate(text=text, src=input_language, dest=output_language)
     output_text.configure(state='normal')
     output_text.delete('1.0', 'end')
-    output_text.insert('1.0',result.text)
+    output_text.insert('1.0', result.text)
     output_text.configure(state='disabled')
 
-language_list = ['pt', 'es', 'en']
+    with open('traducoes.txt', mode='a', newline='', encoding='UTF-8') as arquivo:
+        arquivo.write(f'{text.strip()}|{input_language}|{result.text.strip()}|{output_language}\n')
+
+def delete_translation(tabela):
+    linha_selecionada = tabela.selection()
+    if linha_selecionada:
+        tabela.delete(linha_selecionada)
+        with open('traducoes.txt', mode='w', newline='', encoding='UTF-8') as arquivo:
+            for linha in tabela.get_children():
+                linha = tabela.item(linha)['values']
+                arquivo.write(f'{linha[0]}|{linha[1]}|{linha[2]}|{linha[3]}\n')
+
+def history():
+    history_frame = ttk.Frame(global_frame)
+    history_frame.pack(fill='both', expand='yes')
+
+    tabela = ttk.Treeview(history_frame, columns=('Input', 'Input Language', 'Output', 'Output Language'), show='headings')
+    tabela.heading('Input', text='Input')
+    tabela.heading('Input Language', text='Input Language')
+    tabela.heading('Output', text='Output')
+    tabela.heading('Output Language', text='Output Language')
+
+    tabela.column('Input', width=200, anchor="center")
+    tabela.column('Input Language', width=200, anchor="center")
+    tabela.column('Output', width=200, anchor="center")
+    tabela.column('Output Language', width=200, anchor="center")
+
+    with open('traducoes.txt', mode='r', newline='', encoding='UTF-8') as arquivo:
+        for linha in arquivo:
+            linha = linha.strip().split('|')
+            tabela.insert('', 'end', values=(linha[0], linha[1], linha[2], linha[3]))
+
+    tabela.pack(fill='both', expand='yes', padx=10, pady=10)
+
+    button_close_history = ttk.Button(history_frame, text='Close History', command=lambda: history_frame.destroy())
+    button_close_history.pack(fill='both', padx=10, pady=10)
+    button_delete_translation = ttk.Button(history_frame, text='Delete Translation', command=lambda: delete_translation(tabela))
+    button_delete_translation.pack(fill='both', padx=10, pady=10)
+
+language_list = ['pt', 'es', 'en', 'fr', 'de', 'it', 'ru', 'ja', 'ko', 'ar', 'hi']
 
 # Input
 frame_input = ttk.Frame(global_frame)
@@ -28,13 +68,13 @@ frame_input = ttk.Frame(global_frame)
 label_input = ttk.Label(
     frame_input,
     text='Input:',
-    font=(None, 20)
+    font=(None, 10)
 )
 
 combo_input = ttk.Combobox(
     frame_input,
     values=language_list,
-    font=(None, 20),
+    font=(None, 10),
     state='readonly'
 )
 combo_input.set('pt')
@@ -50,20 +90,19 @@ input_text = Text(
 )
 input_text.pack(padx=10, fill='both', expand='yes')
 
-
-#Output
+# Output
 frame_output = ttk.Frame(global_frame)
 
 label_output = ttk.Label(
     frame_output,
     text='Output:',
-    font=(None, 20),
+    font=(None, 10),
 )
 
 combo_output = ttk.Combobox(
     frame_output,
     values=language_list,
-    font=(None, 20),
+    font=(None, 10),
     state='readonly'
 )
 combo_output.set('en')
@@ -79,16 +118,20 @@ output_text = Text(
 )
 output_text.pack(padx=10, pady=20, fill='both', expand='yes')
 
-button = ttk.Button(
+button_translate = ttk.Button(
     global_frame,
     text='Translate!',
-    # font=(None, 20),
     command=translate
 )
-button.pack(fill='both', padx=10, pady=10)
+button_translate.pack(fill='both', padx=10, pady=10)
+
+button_history = ttk.Button(
+    global_frame,
+    text='History',
+    command=history
+)
+button_history.pack(fill='both', padx=10, pady=10)
 
 window.bind('<Return>', translate)
-
-global_frame.pack()
 
 window.mainloop()
